@@ -42,6 +42,17 @@ public class Restaurante {
         }
     }
 
+
+    public void generarReporte3() {
+        int total = calcularTotal();
+        System.out.println("------------------------");
+        System.out.println("El total de ventas para el restaurante es: " + total);
+        ArrayList<Pedido> pedidosOrdenados = this.pedidosPorPrecio();
+        for(Pedido pedido : pedidosOrdenados) {
+            pedido.generarReporte();
+        }
+    }
+
     private int calcularTotal() {
         int total = 0;
         for (Pedido pedido : pedidos) {
