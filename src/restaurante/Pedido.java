@@ -1,45 +1,35 @@
 package restaurante;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Pedido {
-    private Usuario cliente;
-    private ArrayList<Producto> productos;
+    private Usuario usuario;
+    private List<Producto> productos;
 
-    public Pedido(Usuario cliente, ArrayList<Producto> productos) {
-        this.cliente = cliente;
+    public Pedido(Usuario usuario, List<Producto> productos) {
+        this.usuario = usuario;
         this.productos = productos;
     }
 
-    public Usuario getCliente() {
-        return cliente;
+    public Usuario getUsuario() {
+        return usuario;
     }
-    public ArrayList<Producto> getProductos() {
+
+    public List<Producto> getProductos() {
         return productos;
     }
 
-    public void setCliente(Usuario cliente) {
-        this.cliente = cliente;
-    }
-    public void setProductos(ArrayList<Producto> productos) {
-        this.productos = productos;
-    }
-
     public int calcularTotal() {
-        int total = 0;
-        for (Producto producto : productos) {
-            total += producto.getPrecio();
-        }
-        return total;
+        return productos.stream().mapToInt(Producto::getPrecio).sum();
     }
 
     public void generarReporte() {
-        System.out.println("------------------------");
-        System.out.println("Pedido de " + cliente.getNombre());
-        System.out.println("Productos:");
+        System.out.println("Pedido de " + usuario.getNombre() + ":");
         for (Producto producto : productos) {
-            System.out.println(producto.getNombre() + " - " + producto.getPrecio());
+            System.out.println(" - " + producto.getNombre() + ": $" + producto.getPrecio());
         }
-        System.out.println("Total: " + calcularTotal());
+        System.out.println("Total: $" + calcularTotal());
+        System.out.println("------------------------");
     }
 }
+

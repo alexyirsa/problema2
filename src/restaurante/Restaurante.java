@@ -2,6 +2,7 @@ package restaurante;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class Restaurante {
     private ArrayList<Producto> productos;
@@ -26,29 +27,12 @@ public class Restaurante {
         int total = calcularTotal();
         System.out.println("------------------------");
         System.out.println("El total de ventas para el restaurante es: " + total);
-        ArrayList<Pedido> pedidosOrdenados = this.pedidosPorPrecio();
-        for(Pedido pedido : pedidosOrdenados) {
-            pedido.generarReporte();
-        }
-    }
 
-    public void generarReporte2() {
-        int total = calcularTotal();
-        System.out.println("------------------------");
-        System.out.println("El total de ventas para el restaurante es: " + total);
-        ArrayList<Pedido> pedidosOrdenados = this.pedidosPorPrecio();
-        for(Pedido pedido : pedidosOrdenados) {
-            pedido.generarReporte();
-        }
-    }
+        // Crear una copia de la lista de pedidos antes de ordenarla
+        ArrayList<Pedido> pedidosCopia = new ArrayList<>(pedidos);
+        ArrayList<Pedido> pedidosOrdenados = pedidosPorPrecio(pedidosCopia);
 
-
-    public void generarReporte3() {
-        int total = calcularTotal();
-        System.out.println("------------------------");
-        System.out.println("El total de ventas para el restaurante es: " + total);
-        ArrayList<Pedido> pedidosOrdenados = this.pedidosPorPrecio();
-        for(Pedido pedido : pedidosOrdenados) {
+        for (Pedido pedido : pedidosOrdenados) {
             pedido.generarReporte();
         }
     }
@@ -63,11 +47,8 @@ public class Restaurante {
         return total;
     }
 
-    public ArrayList<Pedido> pedidosPorPrecio() {
-        ArrayList<Pedido> pedidosCopia = new ArrayList<>();
-        for (Pedido pedido : pedidos) {
-            pedidosCopia.add(pedido);
-        }
+    public ArrayList<Pedido> pedidosPorPrecio(ArrayList<Pedido> pedidos) {
+        ArrayList<Pedido> pedidosCopia = new ArrayList<>(pedidos);
         ArrayList<Pedido> pedidosOrdenados = ordenarPedidosPorPrecioHelper(pedidosCopia);
         Collections.reverse(pedidosOrdenados);
         return pedidosOrdenados;
@@ -98,7 +79,7 @@ public class Restaurante {
     private ArrayList<Pedido> merge(ArrayList<Pedido> izquierda, ArrayList<Pedido> derecha) {
         ArrayList<Pedido> resultado = new ArrayList<>();
 
-        while (izquierda.size() > 0 && derecha.size() > 0) {
+        while (!izquierda.isEmpty() && !derecha.isEmpty()) {
             if (izquierda.get(0).calcularTotal() < derecha.get(0).calcularTotal()) {
                 resultado.add(izquierda.get(0));
                 izquierda.remove(0);
@@ -108,62 +89,47 @@ public class Restaurante {
             }
         }
 
-        while (izquierda.size() > 0) {
+        while (!izquierda.isEmpty()) {
             resultado.add(izquierda.get(0));
             izquierda.remove(0);
         }
 
-        while (derecha.size() > 0) {
+        while (!derecha.isEmpty()) {
             resultado.add(derecha.get(0));
             derecha.remove(0);
         }
 
         return resultado;
     }
-
     public static void main(String[] args) {
-        ArrayList<Producto> productos = new ArrayList<>();
-        productos.add(new Producto("Hamburguesa", 100));
-        productos.add(new Producto("Papas", 50));
-        productos.add(new Producto("Refresco", 30));
-        productos.add(new Producto("Helado", 20));
+        List<Producto> productos = List.of(
+                new Producto("Hamburguesa", 100),
+                new Producto("Papas", 50),
+                new Producto("Refresco", 30),
+                new Producto("Helado", 20)
+        );
 
-        ArrayList<Usuario> usuarios = new ArrayList<>();
-        usuarios.add(new Usuario("Juan", "Calle 1", new ArrayList<Pedido>()));
-        usuarios.add(new Usuario("Pedro", "Calle 2", new ArrayList<Pedido>()));
+        List<Usuario> usuarios = List.of(
+                new Usuario("Juan", "Calle 1", new ArrayList<>()),
+                new Usuario("Pedro", "Calle 2", new ArrayList<>())
+        );
 
-        ArrayList<Producto> productosPedido1 = new ArrayList<>();
-        productosPedido1.add(productos.get(0));
-        productosPedido1.add(productos.get(1));
+        List<Producto> productosPedido1 = List.of(productos.get(0), productos.get(1));
+        List<Producto> productosPedido2 = List.of(productos.get(2), productos.get(3));
+        List<Producto> productosPedido3 = List.of(productos.get(0), productos.get(1), productos.get(2));
 
-        ArrayList<Producto> productosPedido2 = new ArrayList<>();
-        productosPedido2.add(productos.get(2));
-        productosPedido2.add(productos.get(3));
+        List<Pedido> pedidos = List.of(
+                new Pedido(usuarios.get(0), new ArrayList<>(productosPedido1)),
+                new Pedido(usuarios.get(0), new ArrayList<>(productosPedido2)),
+                new Pedido(usuarios.get(1), new ArrayList<>(productosPedido3))
+        );
 
-        ArrayList<Producto> productosPedido3 = new ArrayList<>();
-        productosPedido3.add(productos.get(0));
-        productosPedido3.add(productos.get(1));
-        productosPedido3.add(productos.get(2));
+        usuarios.get(0).setPedidos(List.of(pedidos.get(0), pedidos.get(1)));
+        usuarios.get(1).setPedidos(List.of(pedidos.get(2)));
 
-        ArrayList<Pedido> pedidos = new ArrayList<>();
-        pedidos.add(new Pedido(usuarios.get(0), productosPedido1));
-        pedidos.add(new Pedido(usuarios.get(0), productosPedido2));
-        pedidos.add(new Pedido(usuarios.get(1), productosPedido3));
-
-        ArrayList<Pedido> pedidosUsuario1 = new ArrayList<>();
-        pedidosUsuario1.add(pedidos.get(0));
-        pedidosUsuario1.add(pedidos.get(1));
-
-        ArrayList<Pedido> pedidosUsuario2 = new ArrayList<>();
-        pedidosUsuario2.add(pedidos.get(2));
-
-        usuarios.get(0).setPedidos(pedidosUsuario1);
-        usuarios.get(1).setPedidos(pedidosUsuario2);
-
-        Restaurante restaurante = new Restaurante(productos, pedidos, usuarios);
+        Restaurante restaurante = new Restaurante(new ArrayList<>(productos), new ArrayList<>(pedidos), new ArrayList<>(usuarios));
 
         restaurante.generarReporte();
-        usuarios.get(0).generarReporte();
-        usuarios.get(1).generarReporte();
+        usuarios.forEach(Usuario::generarReporte);
     }
 }
